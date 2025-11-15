@@ -19,13 +19,13 @@ const DEFAULT_DATASETS: MaterialDataset[] = [
 ];
 
 type RouteContext = {
-  params: {
+  params: Promise<{
     materialId: string;
-  };
+  }>;
 };
 
 export async function GET(req: NextRequest, context: RouteContext) {
-  const { materialId } = context.params;
+  const { materialId } = await context.params;
   const datasetParam = req.nextUrl.searchParams.get("datasets");
   const taskIdsParam = req.nextUrl.searchParams.get("taskIds");
   const datasetList = datasetParam ? parseDatasets(datasetParam) : DEFAULT_DATASETS;
