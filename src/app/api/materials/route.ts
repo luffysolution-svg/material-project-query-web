@@ -126,7 +126,7 @@ function assignString(
 ) {
   const text = getString(value);
   if (text) {
-    params[key] = text;
+    (params as any)[key] = text;
   }
 }
 
@@ -137,7 +137,7 @@ function assignArray(
 ) {
   const array = parseStringArray(value);
   if (array) {
-    params[key] = array;
+    (params as any)[key] = array;
   }
 }
 
