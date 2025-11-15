@@ -6,6 +6,7 @@ import {
   MATERIALS_SORTABLE_FIELDS,
   MATERIAL_DATASETS,
   type MaterialDataset,
+  type MaterialsSortableField,
 } from "@/config/materials";
 import type {
   AbsorptionProperty,
@@ -196,13 +197,13 @@ export async function fetchMaterialProperties(
     if (item.dataset === "substrates") {
       const raw = item.entry as SubstrateMatch[];
       response.substrates = Array.isArray(raw)
-        ? raw.map((entry) => ({
-            ...entry,
-            norients:
-              entry.norients ??
-              (entry as Record<string, unknown>)["_norients"] ??
-              undefined,
-          }))
+        ? raw.map((entry) => {
+            const norients = entry.norients ?? (entry as Record<string, unknown>)["_norients"];
+            return {
+              ...entry,
+              norients: typeof norients === 'number' ? norients : (norients === null ? null : undefined),
+            };
+          })
         : undefined;
     }
     if (item.dataset === "eos") {
@@ -246,7 +247,7 @@ async function fetchDatasetEntry<D extends MaterialDataset>(
 ) {
   const config = MATERIAL_DATASETS[dataset];
   const searchParams = new URLSearchParams();
-  const limit = config.limit ?? (config.multiple ? 10 : 1);
+  const limit = (config as any).limit ?? ((config as any).multiple ? 10 : 1);
   searchParams.set("_limit", limit.toString());
 
   if (dataset === "tasks") {
@@ -281,7 +282,7 @@ async function fetchDatasetEntry<D extends MaterialDataset>(
     apiKey
   );
 
-  if (config.multiple) {
+  if ((config as any).multiple) {
     return (payload.data ?? []) as DatasetEntryMap[D];
   }
 
@@ -296,7 +297,7 @@ function buildQuery(params: MaterialSearchParams & { page: number; pageSize: num
   query.set("_all_fields", "false");
   query.set("_fields", SUMMARY_FIELDS.join(","));
 
-  const sortField = params.sortField && SORTABLE_FIELDS.has(params.sortField)
+  const sortField = params.sortField && SORTABLE_FIELDS.has(params.sortField as MaterialsSortableField)
     ? params.sortField
     : "energy_above_hull";
   const sortOrder = params.sortOrder === "desc" ? "desc" : "asc";

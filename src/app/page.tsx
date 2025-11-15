@@ -2,6 +2,8 @@ import MaterialsDashboard from "@/components/materials-dashboard";
 import { fetchMaterials } from "@/lib/materials";
 import type { MaterialSearchParams } from "@/types/materials";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const initialQuery: MaterialSearchParams = {
     pageSize: 18,

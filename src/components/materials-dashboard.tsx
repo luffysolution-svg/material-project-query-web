@@ -224,7 +224,7 @@ export default function MaterialsDashboard({
             typeof (payload as Record<string, unknown>)?.error === 'string'
               ? (payload as Record<string, unknown>).error
               : '无法连接到 Materials Project 数据接口。';
-          throw new Error(message);
+          throw new Error(String(message));
         }
 
         const data = payload as MaterialsResponse;
@@ -509,7 +509,7 @@ function sanitizeParams(params: MaterialSearchParams): MaterialSearchParams {
 
     if (Array.isArray(value)) {
       if (value.length) {
-        cleaned[key] = value;
+        (cleaned as any)[key] = value;
       }
       return;
     }
@@ -519,7 +519,7 @@ function sanitizeParams(params: MaterialSearchParams): MaterialSearchParams {
       const hasMin = typeof range.min === 'number';
       const hasMax = typeof range.max === 'number';
       if (hasMin || hasMax) {
-        cleaned[key] = {
+        (cleaned as any)[key] = {
           ...(hasMin ? { min: range.min } : {}),
           ...(hasMax ? { max: range.max } : {}),
         } as RangeFilter;
@@ -527,7 +527,7 @@ function sanitizeParams(params: MaterialSearchParams): MaterialSearchParams {
       return;
     }
 
-    cleaned[key] = value;
+    (cleaned as any)[key] = value;
   });
 
   return cleaned;
