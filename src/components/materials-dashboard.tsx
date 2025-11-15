@@ -167,7 +167,7 @@ export default function MaterialsDashboard({
             typeof (payload as Record<string, unknown>)?.error === 'string'
               ? (payload as Record<string, unknown>).error
               : '无法获取材料详细属性，请检查输入。';
-          throw new Error(message);
+          throw new Error(String(message));
         }
         return payload as MaterialPropertyResponse;
       })
